@@ -128,7 +128,7 @@ class Series:
 
 def load(path):
     import json
-    f = open('profiledb.json')
+    f = open(path)
     experiments = []
     for line in f:
         experiments.append(Experiment(json.loads(line)))
