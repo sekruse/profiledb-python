@@ -8,11 +8,12 @@ def find(func, iterable):
 
 def median(values):
     size = len(values)
+    center = size // 2
     sortedvalues = sorted(values)
     if size % 2 == 0:
-        return (values[size / 2] + values[size / 2 - 1]) / 2
+        return (values[center - 1] + values[center]) / 2
     else:
-        return values[size / 2]
+        return values[center]
 
 class ProfileDB:
     def __init__(self, experiments):
@@ -98,6 +99,9 @@ class Experiment:
     def __init__(self, data):
         self.data = data
 
+    def id(self):
+        return self.data['id']
+
     def tags(self):
         return self.data.get('tags', [])
 
@@ -118,6 +122,9 @@ class Experiment:
             measurements = next.get('rounds', [])
             return next
         raise Exception
+
+    def __str__(self):
+        return 'Experiment({})'.format(self.id())
 
 class Series:
 
