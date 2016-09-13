@@ -1,34 +1,17 @@
-def find(func, iterable):
-    '''Find an element that satisfies a predicate.'''
-    filtered = [item for item in iterable if func(item)]
-    if len(filtered) == 0: return None
-    if len(filtered) > 1:
-        print("Warning: find(...) found more than one matching element.")
-    return filtered[0]
-
-def median(values):
-    size = len(values)
-    center = size // 2
-    sortedvalues = sorted(values)
-    if size % 2 == 0:
-        return (values[center - 1] + values[center]) / 2
-    else:
-        return values[center]
+from helpers import *
 
 class ProfileDB:
     def __init__(self, experiments):
         self.experiments = experiments
 
-    def singleseries(self, title, xfunc, yfunc, selfunc = lambda val: True, groupfunc = None):
-        return self._createseries(self.experiments, title, xfunc, yfunc, selfunc, groupfunc)
-
-    def _createseries(self, data, title, xfunc, yfunc, selfunc, groupfunc):
+    def _createseries(self, experiments, key, title, xfunc, yfunc, selfunc, groupfunc):
+        '''Creates a single Series by extracting data from the `experiments`.'''
         # Extract the data.
         mapping = {}
-        for element in data:
-            if not selfunc(element): continue
-            x = xfunc(element)
-            y = yfunc(element)
+        for experiment in experiments:
+            if not selfunc(experiment): continue
+            x = xfunc(experiment)
+            y = yfunc(experiment)
             if x is not None and y is not None:
                 if x in mapping.keys():
                     mapping[x].append(y)
@@ -49,7 +32,10 @@ class ProfileDB:
             else:
                 x.append(item[0])
                 y.append(groupfunc(item[1]))
-        return Series(title, x, y)
+        return Series(key, title, x, y)
+
+    def singleseries(self, title, xfunc, yfunc, selfunc = lambda val: True, groupfunc = None):
+        return self._createseries(self.experiments, title, title, xfunc, yfunc, selfunc, groupfunc)
 
 
     def multipleseries(self, keyfunc, xfunc, yfunc, selfunc = lambda val: True, groupfunc = None, titlefunc = lambda key: str(key)):
@@ -65,10 +51,12 @@ class ProfileDB:
                 experimentgroups[key] = [exp]
 
         # Create a series for all of the experiment groups.
-        return [(item[0], self._createseries(item[1], titlefunc(item[0]), xfunc, yfunc, lambda exp: True, groupfunc)) for item in experimentgroups.items()]
+        return [self._createseries(item[1], item[0], titlefunc(item[0]), xfunc, yfunc, lambda exp: True, groupfunc)\
+                for item in experimentgroups.iteritems()]
 
 
-    def confkeys(self, selfunc = lambda exp: True):
+    def configkeys(self, selfunc = lambda exp: True):
+        '''Retrieve the used configuration keys for a set of experiments.'''
         keys = set()
         for exp in self.experiments:
             if not selfunc(exp): continue
@@ -76,8 +64,8 @@ class ProfileDB:
                 keys.add(key)
         return keys
 
-    def confvalues(self, key):
-        return set([exp.conf(key) for exp in self.experiments])
+    def configvalues(self, key, selfunc = lambda exp: True):
+        return set([exp.conf(key) for exp in self.experiments if selfunc(exp)])
 
     def tags(self):
         return set([tag for exp in self.experiments for tag in exp.tags()])
@@ -114,11 +102,11 @@ class Experiment:
     def conf(self, key, fallback = None):
         return self.subject().configuration().get(key, fallback)
 
-    def measurement(self, path, fallback = {}):
+    def measurement(self, *path):
         measurements = self.measurements()
         for elem in path:
             next = find(lambda m: m['id'] == elem, measurements)
-            if next is None: return fallback
+            if next is None: return None
             measurements = next.get('rounds', [])
             return next
         raise Exception
@@ -127,8 +115,8 @@ class Experiment:
         return 'Experiment({})'.format(self.id())
 
 class Series:
-
-    def __init__(self, title, x, y):
+    def __init__(self, key, title, x, y):
+        self.key = key
         self.title = title
         self.x = x
         self.y = y
