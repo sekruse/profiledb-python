@@ -52,7 +52,7 @@ class ProfileDB:
 
         # Create a series for all of the experiment groups.
         return [self._createseries(item[1], item[0], titlefunc(item[0]), xfunc, yfunc, lambda exp: True, groupfunc)\
-                for item in experimentgroups.iteritems()]
+                for item in experimentgroups.items()]
 
 
     def configkeys(self, selfunc = lambda exp: True):
