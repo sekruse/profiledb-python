@@ -1,4 +1,4 @@
-from helpers import *
+from profiledb.helpers import *
 
 class ProfileDB:
     def __init__(self, experiments):
