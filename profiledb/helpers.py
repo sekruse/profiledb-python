@@ -6,7 +6,7 @@ def find(func, iterable):
         print("Warning: find(...) found more than one matching element.")
     return filtered[0]
 
-def median(*values):
+def median(values):
     '''Calculates the median of the given values'''
     size = len(values)
     center = size // 2
@@ -16,7 +16,7 @@ def median(*values):
     else:
         return values[center]
 
-def geomean(*values):
+def geomean(values):
     '''Calculates the geometric mean of a sequence of non-negative values.'''
     import math
     accu = 0
