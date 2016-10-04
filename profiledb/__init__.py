@@ -64,11 +64,11 @@ class ProfileDB:
                 keys.add(key)
         return keys
 
-    def configvalues(self, key, selfunc = lambda exp: True):
-        return set([exp.conf(key) for exp in self.experiments if selfunc(exp)])
+    def configvalues(self, key, selfunc = lambda exp: True, mapfunc = lambda value: value):
+        return set([mapfunc(exp.conf(key)) for exp in self.experiments if selfunc(exp)])
 
-    def tags(self):
-        return set([tag for exp in self.experiments for tag in exp.tags()])
+    def tags(self, selfunc = lambda exp: True):
+        return set([tag for exp in self.experiments for tag in exp.tags() if selfunc(exp)])
 
 class Subject:
     def __init__(self, data):
