@@ -1,13 +1,18 @@
 import matplotlib.pyplot as plt
 
-def plot(series, axes = plt, **kwargs):
+def series_title(series):
+    '''This helper function extracts the title of a series.'''
+    return series.title
+
+def plot(series, axes = plt, label = series_title, **kwargs):
     '''Plot a single series.'''
+    kwargs['label'] = label
     axes.plot(series.x, series.y, **evaluate(series, **kwargs))
 
-def plotall(seriesset, axes = plot, **kwargs):
+def plotall(seriesset, axes = plt, label = series_title, **kwargs):
     '''Plot all of the series in the seriesset.'''
     for series in seriesset:
-        plot(series, axes, **kwargs)
+        plot(series, axes, label = label, **kwargs)
 
 def evaluate(series, **kwargs):
     '''Resolves any keyword arguments that are functions by applying the series to them.'''
@@ -18,6 +23,3 @@ def evaluate(series, **kwargs):
         if callable(val): val = val(series)
         evaluated[key] = val
     return evaluated
-
-def series_title(series):
-    return series.title
