@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 
-def plot(series, **kwargs):
+def plot(series, axes = plt, **kwargs):
     '''Plot a single series.'''
-    plt.plot(series.x, series.y, label = series.title, **evaluate(series, **kwargs))
+    axes.plot(series.x, series.y, **evaluate(series, **kwargs))
 
-def plotall(seriesset, **kwargs):
+def plotall(seriesset, axes = plot, **kwargs):
     '''Plot all of the series in the seriesset.'''
     for series in seriesset:
-        plot(series, **kwargs)
+        plot(series, axes, **kwargs)
 
 def evaluate(series, **kwargs):
     '''Resolves any keyword arguments that are functions by applying the series to them.'''
@@ -18,3 +18,6 @@ def evaluate(series, **kwargs):
         if callable(val): val = val(series)
         evaluated[key] = val
     return evaluated
+
+def series_title(series):
+    return series.title
