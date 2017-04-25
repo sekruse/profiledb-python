@@ -39,6 +39,10 @@ class ProfileDB:
 
 
     def multipleseries(self, keyfunc, xfunc, yfunc, selfunc = lambda val: True, groupfunc = None, titlefunc = lambda key: str(key)):
+        """Creates multiple series according to the definition.
+
+        Returns:
+            (list) a list containing the created `Series`"""
         # Find the series keys and according experiments.
         experimentgroups = {}
         for exp in self.experiments:
@@ -108,7 +112,7 @@ class Experiment:
             next = find(lambda m: m['id'] == elem, measurements)
             if next is None: return None
             measurements = next.get('rounds', [])
-            return next
+        return next
         raise Exception
 
     def __str__(self):
