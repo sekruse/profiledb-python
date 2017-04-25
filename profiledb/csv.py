@@ -28,11 +28,9 @@ def export_multiple_series(series_list, separator=',', quote_char='"', x_title="
     # Build the following lines.
     xy_maps = [dict(zip(series.x, series.y)) for series in series_list]
     for x in x_values:
-        first_col = True
+        csv += str(x)
         for xy_map in xy_maps:
-            if not first_col:
-                csv += separator
-            first_col = False
+            csv += separator
             csv += quote(xy_map.get(x, ''), quote_char)
         csv += '\n'
 
